@@ -1,0 +1,23 @@
+{
+  "configVersion": 11,
+  "currentThemeName": "catppuccin",
+  "currentThemeCategory": "registry",
+  "registryThemeVariants": {
+    "catppuccin": {
+      "dark": {
+        "flavor": "mocha",
+        "accent": "mauve"
+      },
+      "light": {
+        "flavor": "latte",
+        "accent": "mauve"
+      }
+    }
+  },
+  "gtkThemingEnabled": true,
+  "qtThemingEnabled": true,
+  "runDmsMatugenTemplates": true,
+  "runUserMatugenTemplates": true,
+  "matugenScheme": "scheme-tonal-spot",
+  "nightModeEnabled": false
+}

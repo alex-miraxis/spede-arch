@@ -1,0 +1,124 @@
+# spede-arch — official-repo packages (pacman, repos: core / extra / multilib)
+#
+# Authoritative list, taken from design spec §9. Grouped by purpose.
+# Format: one package per line; '#' comments and blank lines ignored.
+# Consumed by pkg_install in the relevant Phase B step (NOT all at once).
+#
+# NOTE — moved from AUR to official `extra` (do NOT put these in aur.txt):
+#   openai-codex, zed, bitwarden, bitwarden-cli, quickshell, matugen, dgop,
+#   ghostty, telegram-desktop.
+
+# --- Pacstrap base set (Phase A, step_pacstrap) -------------------------------
+# NetworkManager here is non-negotiable: without it the rebooted system has
+# no network and every later AUR/CLI installer fails.
+base
+base-devel
+linux
+linux-firmware
+amd-ucode
+btrfs-progs
+cryptsetup
+grub
+efibootmgr
+grub-btrfs
+snapper
+snap-pac
+inotify-tools
+networkmanager
+sudo
+git
+vim
+reflector
+pacman-contrib
+zsh
+stow
+# linux-lts            # optional fallback kernel (commented; enable if wanted)
+
+# --- AMD GPU userspace (pure Wayland; NO xf86-video-amdgpu) -------------------
+mesa
+vulkan-radeon
+libva-mesa-driver
+vulkan-icd-loader
+
+# --- Hyprland + DankMaterialShell core ---------------------------------------
+# quickshell / matugen / dgop are in official extra (spec §6 — NOT AUR).
+hyprland
+quickshell
+matugen
+dgop
+accountsservice
+
+# --- Desktop glue DMS does NOT replace (portals, Qt, polkit, clipboard) -------
+xdg-desktop-portal
+xdg-desktop-portal-hyprland
+xdg-desktop-portal-gtk
+polkit
+qt6-wayland
+qt5-wayland
+qt6ct
+adw-gtk-theme
+wl-clipboard
+cliphist
+xdg-user-dirs
+brightnessctl
+
+# --- Screenshot tools ---------------------------------------------------------
+grim
+slurp
+satty
+
+# --- Login (greetd; dms-greeter itself is AUR) -------------------------------
+greetd
+
+# --- Audio (pipewire stack; pulseaudio must NOT be installed) ----------------
+pipewire
+pipewire-pulse
+pipewire-alsa
+wireplumber
+
+# --- Bluetooth ----------------------------------------------------------------
+bluez
+bluez-utils
+
+# --- Printing + mDNS ----------------------------------------------------------
+cups
+system-config-printer
+gutenprint
+foomatic-db
+avahi
+nss-mdns
+
+# --- Firewall -----------------------------------------------------------------
+ufw
+
+# --- Terminal / file manager / media -----------------------------------------
+ghostty
+dolphin
+ark
+kio-extras
+kdegraphics-thumbnailers
+ffmpegthumbs
+vlc
+vlc-plugins-all
+
+# --- Editors / dev CLIs (Zed, Codex now official extra) ----------------------
+zed
+neovim
+ripgrep
+fd
+jq
+openai-codex
+
+# --- Messaging / secrets (Telegram, Bitwarden now official extra) ------------
+telegram-desktop
+bitwarden
+bitwarden-cli
+
+# --- Fonts --------------------------------------------------------------------
+noto-fonts
+noto-fonts-cjk
+noto-fonts-emoji
+ttf-jetbrains-mono-nerd
+ttf-meslo-nerd
+inter-font
+# Manrope: prefer official if present, else AUR ttf-manrope (see aur.txt).

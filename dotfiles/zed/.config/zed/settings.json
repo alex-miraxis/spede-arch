@@ -1,0 +1,23 @@
+{
+  "theme": "Catppuccin Mocha",
+  "vim_mode": false,
+  "ui_font_family": "Inter",
+  "ui_font_size": 16,
+  "buffer_font_family": "JetBrainsMono Nerd Font",
+  "buffer_font_size": 14,
+  "buffer_font_features": {
+    "calt": true
+  },
+  "format_on_save": "on",
+  "tab_size": 2,
+  "soft_wrap": "editor_width",
+  "show_whitespaces": "selection",
+  "terminal": {
+    "font_family": "MesloLGS Nerd Font",
+    "font_size": 14
+  },
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false
+  }
+}

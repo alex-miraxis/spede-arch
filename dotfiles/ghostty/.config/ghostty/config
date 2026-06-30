@@ -1,0 +1,22 @@
+# Ghostty configuration — spede-arch
+# macOS-style native keybinds. Ghostty is excluded from xremap (class
+# com.mitchellh.ghostty), so Super+C = copy and Ctrl+C = SIGINT.
+
+# Theme — Ghostty ships the Catppuccin themes built in.
+theme = catppuccin-mocha
+
+# Font — Nerd Font for powerlevel10k glyphs.
+font-family = JetBrainsMono Nerd Font
+font-size = 13
+
+# Don't prompt when closing a surface/tab/split.
+confirm-close-surface = false
+
+# Keybindings (spec §8, corrected syntax). Only super+c is performable.
+keybind = performable:super+c=copy_to_clipboard
+keybind = super+v=paste_from_clipboard
+keybind = super+t=new_tab
+keybind = super+w=close_surface
+keybind = super+d=new_split:right
+keybind = super+equal=increase_font_size:1
+keybind = super+minus=decrease_font_size:1

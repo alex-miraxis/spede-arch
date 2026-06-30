@@ -1,3 +1,10 @@
 # secrets / local
 *.key
 secrets/
+
+# install-time runtime config (contains target disk / hostname / user)
+.install-config
+
+# LUKS / crypto keyfiles — never commit
+*.bin
+crypto_keyfile.bin
