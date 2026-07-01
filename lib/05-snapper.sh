@@ -37,7 +37,15 @@ step_snapper() {
 		if findmnt -no TARGET /.snapshots >/dev/null 2>&1; then
 			snapshots_mounted=1
 			info "snapper: temporarily unmounting /.snapshots"
-			umount /.snapshots
+			umount /.snapshots || die "snapper: could not unmount /.snapshots (busy?)"
+		fi
+
+		# create-config runs `btrfs subvolume create /.snapshots` and FAILS with
+		# "already exists" if the path is present. Unmounting alone leaves the
+		# empty mountpoint directory behind, so remove it first (guarded so we
+		# never touch a still-live mount).
+		if [[ -e /.snapshots ]] && ! findmnt /.snapshots >/dev/null 2>&1; then
+			rmdir /.snapshots 2>/dev/null || rm -rf /.snapshots
 		fi
 
 		info "snapper: snapper -c root create-config /"

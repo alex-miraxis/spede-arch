@@ -62,7 +62,7 @@ step_boot() {
 MODULES=(amdgpu)
 BINARIES=()
 FILES=(${KEYFILE})
-HOOKS=(base udev autodetect microcode modconf kms keyboard keymap consolefont block encrypt filesystems fsck grub-btrfs-overlayfs)
+HOOKS=(base udev autodetect microcode modconf kms keyboard keymap block encrypt filesystems fsck grub-btrfs-overlayfs)
 EOF
 
 	info "boot: regenerating all initramfs images (mkinitcpio -P)"
