@@ -25,8 +25,15 @@ step_snapper() {
 	#    `snapper -c root create-config /` auto-creates a NESTED subvolume at
 	#    /.snapshots (inside @). We immediately undo that below so the
 	#    separate top-level @snapshots subvolume can be mounted there instead.
+	#
+	#    NOTE: every snapper call uses --no-dbus. Modern snapper talks to the
+	#    snapperd daemon over the system D-Bus by default; inside arch-chroot
+	#    there is no running system bus, so a plain `snapper` invocation aborts
+	#    with "Failure (org.freedesktop.DBus.Error.ServiceUnknown)". --no-dbus
+	#    makes snapper operate directly (root-only, which we always are), and it
+	#    is equally correct on the booted system, so we use it unconditionally.
 	# -----------------------------------------------------------------------
-	if snapper list-configs 2>/dev/null | awk 'NR>2 {print $1}' | grep -qx 'root'; then
+	if snapper --no-dbus list-configs 2>/dev/null | awk 'NR>2 {print $1}' | grep -qx 'root'; then
 		ok "snapper: root config already exists, skipping create-config"
 	else
 		# The separate @snapshots subvolume is mounted at /.snapshots by the
@@ -48,8 +55,8 @@ step_snapper() {
 			rmdir /.snapshots 2>/dev/null || rm -rf /.snapshots
 		fi
 
-		info "snapper: snapper -c root create-config /"
-		snapper -c root create-config /
+		info "snapper: snapper --no-dbus -c root create-config /"
+		snapper --no-dbus -c root create-config /
 
 		# Delete the nested .snapshots subvolume snapper just created inside @.
 		if btrfs subvolume show /.snapshots >/dev/null 2>&1; then
