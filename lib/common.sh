@@ -130,13 +130,22 @@ in_chroot() {
 
 # as_user USER CMD... — run CMD as USER with a login-ish env. Uses runuser
 # when available (root, no PAM password), else sudo -u.
+#
+# CWD reset: setup.sh runs from REPO_DEST (/root/spede-arch, mode 0700).
+# runuser/sudo do NOT change the working directory, so a command dropped to an
+# unprivileged user would inherit that CWD — which the user cannot traverse.
+# Tools that touch their starting dir then break: the oh-my-zsh installer does
+# `cd "$ZSH" && ... && cd -`, and that `cd -` back into /root fails, aborting
+# the whole install. We force CWD (and PWD/OLDPWD, which runuser leaves stale)
+# to `/`, a path every user can access. Every as_user caller uses absolute
+# paths, so resetting the CWD is safe.
 as_user() {
 	local user="$1"; shift
 	[[ -n "$user" ]] || die "as_user: empty user"
 	if command -v runuser >/dev/null 2>&1; then
-		runuser -u "$user" -- "$@"
+		runuser -u "$user" -- env --chdir=/ PWD=/ OLDPWD=/ "$@"
 	else
-		sudo -u "$user" -- "$@"
+		sudo -u "$user" -- env --chdir=/ PWD=/ OLDPWD=/ "$@"
 	fi
 }
 
