@@ -67,8 +67,9 @@ grim
 slurp
 satty
 
-# --- Login (greetd; dms-greeter itself is AUR) -------------------------------
-greetd
+# --- Login (SDDM Wayland greeter under weston; Sugar Candy theme is AUR) ------
+sddm
+weston
 
 # --- Audio (pipewire stack; pulseaudio must NOT be installed) ----------------
 pipewire

@@ -7,8 +7,8 @@
 # hyprlock, hypridle, or hyprpolkitagent — DMS provides wallpaper, lock, idle
 # and polkit; duplicates conflict.
 #
-# AUR pieces (dms-shell, the DMS greeter, xremap) are handled in step_aur /
-# step_greeter / step_input — NOT here. quickshell/matugen/dgop live in the
+# AUR pieces (dms-shell, the Sugar Candy SDDM theme, xremap) are handled in
+# step_aur / step_greeter / step_input — NOT here. quickshell/matugen/dgop live in the
 # official `extra` repo (the bare AUR names don't exist), so they go here.
 #
 # Idempotent: pacman -S --needed, and xdg-user-dirs-update is naturally
