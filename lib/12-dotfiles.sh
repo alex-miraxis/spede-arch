@@ -110,8 +110,20 @@ step_dotfiles() {
 	local zsh_custom="${omz_dir}/custom"
 
 	# -- 2. powerlevel10k theme --------------------------------------------
-	_clone_user "https://github.com/romkatv/powerlevel10k.git" \
-		"${zsh_custom}/themes/powerlevel10k"
+	local p10k_dir="${zsh_custom}/themes/powerlevel10k"
+	_clone_user "https://github.com/romkatv/powerlevel10k.git" "$p10k_dir"
+
+	# Pre-fetch the gitstatusd daemon NOW, while we are guaranteed online (the
+	# preflight required network). p10k otherwise downloads it lazily on the
+	# first prompt; if that first shell is offline (e.g. before NetworkManager
+	# has associated), p10k prints "gitstatus failed to initialize" every shell
+	# until online. The installer script drops the binary into
+	# ~/.cache/gitstatus, exactly where the p10k plugin looks for it. Non-fatal.
+	if [[ -f "${p10k_dir}/gitstatus/install" ]]; then
+		info "dotfiles: pre-fetching powerlevel10k gitstatusd (offline-safe first boot)"
+		as_user "$NEW_USER" sh "${p10k_dir}/gitstatus/install" \
+			|| warn "gitstatus pre-fetch failed (non-fatal; p10k will fetch it on the first online shell)"
+	fi
 
 	# -- 3. zsh plugins -----------------------------------------------------
 	_clone_user "https://github.com/zsh-users/zsh-autosuggestions.git" \

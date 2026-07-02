@@ -54,6 +54,12 @@ main() {
 	# Re-save config inside the target tree (config_path now resolves there).
 	save_config
 
+	# Persist the Wi-Fi credentials captured in preflight into the target so the
+	# rebooted system is online immediately (NetworkManager is enabled in Phase
+	# B). Written here in Phase A — the PSK stays in memory and never lands in
+	# .install-config. No-op for wired installs (empty WIFI_SSID).
+	write_wifi_connection "$NEWROOT" "${WIFI_SSID:-}" "${WIFI_PSK:-}"
+
 	info "entering chroot to run Phase B (setup.sh)"
 	arch-chroot "$NEWROOT" /usr/bin/env bash -c \
 		"cd '${REPO_DEST}' && exec ./setup.sh"

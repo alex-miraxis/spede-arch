@@ -7,7 +7,8 @@ A from-scratch (no Omarchy) bare-metal installer + dotfiles for an
 - AMD desktop GPU (mesa + vulkan-radeon, pure Wayland)
 - LUKS2 full-disk encryption (PBKDF2, GRUB-safe) + Btrfs + snapper snapshots
 - GRUB with `grub-btrfs` snapshot boot menu
-- `greetd` + `greetd-dms-greeter` login (not SDDM)
+- `SDDM` (Wayland greeter under weston) with a DankMaterialShell-styled
+  Sugar Candy theme
 - macOS muscle memory via `xremap` (Cmd→Ctrl) + XKB `us,gr`
 
 See the full verified design in
@@ -37,9 +38,26 @@ proceeding. Do not run it on a machine whose data you have not backed up.
 
 ---
 
-## On-the-metal flow
+## Quick start (one command)
 
-Boot the official Arch ISO (UEFI), then as root on the live system:
+Boot the official Arch ISO (UEFI). If you're on **Wi-Fi**, associate once so
+the bootstrap can reach GitHub (`iwctl` → `station wlan0 connect "<SSID>"`).
+Then, as root:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/alex-miraxis/spede-arch/main/bootstrap.sh | bash
+```
+
+`bootstrap.sh` installs `git` if needed, clones this repo to `/root/spede-arch`,
+and launches Phase A. Preflight then asks for your **Wi-Fi SSID + password**
+and writes them into the installed system, so the machine is online on first
+boot (no offline first-login surprises). Override the source with
+`SPEDE_REPO`, `SPEDE_BRANCH`, or seed Wi-Fi non-interactively with
+`SPEDE_WIFI_SSID` / `SPEDE_WIFI_PSK`.
+
+## On-the-metal flow (manual)
+
+Prefer to drive it by hand? Boot the ISO (UEFI), then as root:
 
 ```sh
 # 1. Connect Wi-Fi (skip if wired/DHCP already works)
@@ -59,8 +77,9 @@ cd spede-arch
 ```
 
 `install.sh` will prompt for the target disk (with a loud destructive-wipe
-confirmation), hostname, username, and passwords. Timezone
-(`Europe/Athens`) and locale (`en_US.UTF-8` + `el_GR.UTF-8`) are hardcoded.
+confirmation), hostname, username, Wi-Fi (optional, for the installed
+system), and passwords. Timezone (`Europe/Athens`) and locale
+(`en_US.UTF-8` + `el_GR.UTF-8`) are hardcoded.
 
 When it finishes:
 
