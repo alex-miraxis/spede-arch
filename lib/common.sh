@@ -203,6 +203,45 @@ enable_user_service_global() {
 		|| warn "could not globally enable user service: $name"
 }
 
+# write_wifi_connection ROOT SSID PSK — write a NetworkManager keyfile into the
+# target so the INSTALLED system auto-connects to Wi-Fi on first boot.
+#
+# The live-ISO network (usually iwd via `iwctl`) does NOT carry into the
+# installed system, so a Wi-Fi machine would otherwise boot offline. We write
+# the profile ourselves, root-owned 0600 (NetworkManager ignores world/group
+# readable keyfiles). No-op when SSID is empty (wired machines).
+write_wifi_connection() {
+	local root="$1" ssid="$2" psk="$3"
+	[[ -n "$ssid" ]] || return 0
+	local dir="${root}/etc/NetworkManager/system-connections"
+	mkdir -p "$dir"
+	local uuid; uuid="$(uuidgen 2>/dev/null || true)"
+	# Sanitise the filename (slashes/spaces would break the path); the real
+	# SSID is preserved verbatim inside the file.
+	local safe_name="${ssid//\//_}"; safe_name="${safe_name// /_}"
+	local f="${dir}/${safe_name}.nmconnection"
+	(
+		umask 077
+		{
+			printf '[connection]\n'
+			printf 'id=%s\n' "$ssid"
+			[[ -n "$uuid" ]] && printf 'uuid=%s\n' "$uuid"
+			printf 'type=wifi\n'
+			printf 'autoconnect=true\n\n'
+			printf '[wifi]\n'
+			printf 'mode=infrastructure\n'
+			printf 'ssid=%s\n\n' "$ssid"
+			printf '[wifi-security]\n'
+			printf 'key-mgmt=wpa-psk\n'
+			printf 'psk=%s\n\n' "$psk"
+			printf '[ipv4]\nmethod=auto\n\n'
+			printf '[ipv6]\nmethod=auto\n'
+		} >"$f"
+	)
+	chmod 600 "$f"
+	ok "wrote NetworkManager Wi-Fi profile for '${ssid}' -> ${f}"
+}
+
 # ---------------------------------------------------------------------------
 #  Config persistence across the chroot boundary.
 # ---------------------------------------------------------------------------

@@ -66,6 +66,30 @@ grub-install may fail to write a boot entry."
 	fi
 	ok "network reachable"
 
+	# --- 3b. Optional: persist Wi-Fi into the installed system ---------------
+	# The live-ISO connection (typically iwd via `iwctl`) does NOT carry over to
+	# the installed system, so a Wi-Fi machine boots offline after the first
+	# reboot. Capture the credentials once here; install.sh writes a
+	# NetworkManager keyfile into the target (write_wifi_connection). Skippable
+	# for wired machines (just press Enter). Seed non-interactively with
+	# SPEDE_WIFI_SSID / SPEDE_WIFI_PSK (e.g. from bootstrap.sh env).
+	WIFI_SSID="${SPEDE_WIFI_SSID:-}"
+	WIFI_PSK="${SPEDE_WIFI_PSK:-}"
+	if [[ -z "$WIFI_SSID" && "${ASSUME_YES:-0}" != "1" ]]; then
+		printf 'Wi-Fi SSID to save for the installed system (Enter to skip if wired): ' >&2
+		read -r WIFI_SSID || WIFI_SSID=""
+	fi
+	if [[ -n "$WIFI_SSID" && -z "$WIFI_PSK" && "${ASSUME_YES:-0}" != "1" ]]; then
+		printf 'Wi-Fi password for %s (input hidden): ' "$WIFI_SSID" >&2
+		read -r -s WIFI_PSK || WIFI_PSK=""
+		printf '\n' >&2
+	fi
+	if [[ -n "$WIFI_SSID" ]]; then
+		ok "Wi-Fi '${WIFI_SSID}' will be configured on the installed system"
+	else
+		info "no Wi-Fi entered — assuming wired (NetworkManager will DHCP on boot)"
+	fi
+
 	# --- 4. NTP / clock ------------------------------------------------------
 	# A wrong clock breaks TLS and pacman/gpg signature checks. Enable NTP and
 	# give it a moment to settle. Idempotent: re-enabling is a no-op.
