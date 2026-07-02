@@ -8,10 +8,15 @@
 #   Helium    : gpg --recv-keys BE677C1989D35EAB2C5F26C9351601AD01D6378E
 #   1Password : gpg --recv-keys 3FEF9748469ADBE15DA7CA80AC2D62742012EA22
 
-# --- DankMaterialShell + greeter ---------------------------------------------
+# --- DankMaterialShell --------------------------------------------------------
 # Shell is dms-shell-git unless dms-shell lands in official extra (spec §6/§14).
 dms-shell-git
-greetd-dms-greeter-git
+
+# --- Login theme (SDDM greeter is official `sddm`; only the theme is AUR) -----
+# Sugar Candy, themed to a DankMaterialShell "DANK" feel in lib/09-greeter.sh.
+# Replaces the old greetd-dms-greeter-git nested-Hyprland greeter (black-screened
+# on Radeon 780M). Installs to /usr/share/sddm/themes/sugar-candy.
+sddm-sugar-candy-git
 
 # --- Input layer (macOS-feel) -------------------------------------------------
 # Must be the -hypr build (xremap compiled with the `hypr` feature; spec §7).
