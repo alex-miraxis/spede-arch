@@ -12,11 +12,12 @@
 # Shell is dms-shell-git unless dms-shell lands in official extra (spec §6/§14).
 dms-shell-git
 
-# --- Login theme (SDDM greeter is official `sddm`; only the theme is AUR) -----
-# Sugar Candy, themed to a DankMaterialShell "DANK" feel in lib/09-greeter.sh.
-# Replaces the old greetd-dms-greeter-git nested-Hyprland greeter (black-screened
-# on Radeon 780M). Installs to /usr/share/sddm/themes/sugar-candy.
-sddm-sugar-candy-git
+# --- Login (DMS greeter for greetd) --------------------------------------------
+# The full DankMaterialShell login UI. Hosted under niri (official extra) per
+# upstream's first-class path; configured to upstream's exact enable/sync
+# contract in lib/09-greeter.sh. Ships /usr/bin/dms-greeter (wrapper) + the
+# greeter QML tree at /usr/share/quickshell/dms-greeter.
+greetd-dms-greeter-git
 
 # --- Input layer (macOS-feel) -------------------------------------------------
 # Must be the -hypr build (xremap compiled with the `hypr` feature; spec §7).

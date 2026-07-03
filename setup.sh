@@ -50,10 +50,13 @@ main() {
 	step_desktop       # Hyprland + DMS (quickshell/matugen/dgop) + portals/glue
 	step_apps          # official-repo applications
 	step_aur           # yay bootstrap + AUR packages (PGP key imports)
-	step_greeter       # greetd + dms-greeter, enable, sync
 	step_input         # xremap, uinput udev/group, XKB us,gr
 	step_services      # NetworkManager, pipewire, bluetooth, cups, avahi, ufw, timesyncd
 	step_dotfiles      # oh-my-zsh, chsh, GNU stow packages
+	step_greeter       # greetd + DMS greeter — AFTER dotfiles: stow replaces the
+	                   # DMS theme files with symlinks into its staging dir, and
+	                   # the greeter's group/ACL grants + read-proof must cover
+	                   # that FINAL layout, not the pre-stow one.
 	step_postinstall   # Claude Code installer, Notion PWA, LazyVim, final notes
 
 	log ""
