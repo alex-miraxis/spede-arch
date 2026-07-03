@@ -67,9 +67,10 @@ grim
 slurp
 satty
 
-# --- Login (SDDM Wayland greeter under weston; Sugar Candy theme is AUR) ------
-sddm
-weston
+# --- Login (greetd + DMS greeter; niri hosts the login UI; acl for setfacl) ---
+greetd
+niri
+acl
 
 # --- Audio (pipewire stack; pulseaudio must NOT be installed) ----------------
 pipewire

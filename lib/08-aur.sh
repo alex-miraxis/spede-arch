@@ -82,6 +82,7 @@ step_aur() {
 	# whole set; the user can re-run setup.sh to retry.
 	local pkgs=(
 		"$dms_pkg"
+		greetd-dms-greeter-git
 		xremap-hypr-bin
 		helium-browser-bin
 		1password

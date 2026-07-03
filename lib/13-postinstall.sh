@@ -130,8 +130,8 @@ step_postinstall() {
 		log "    1. Reboot to apply the greeter + login shell + services:"
 		log "         reboot"
 	fi
-	log "    2. At boot you get the SDDM 'Sugar Candy' greeter; pick the"
-	log "       Hyprland session and log in (configured in step_greeter)."
+	log "    2. At boot you get the DankMaterialShell greeter (greetd, niri-"
+	log "       hosted); log in to your Hyprland session (step_greeter)."
 	log "    3. Open nvim once to let LazyVim sync its plugins."
 	log "    4. Sign in to Claude Code (\`claude\`), 1Password, Bitwarden, etc."
 	log "${_C_GRN}===========================================================${_C_RESET}"

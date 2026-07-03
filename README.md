@@ -7,8 +7,8 @@ A from-scratch (no Omarchy) bare-metal installer + dotfiles for an
 - AMD desktop GPU (mesa + vulkan-radeon, pure Wayland)
 - LUKS2 full-disk encryption (PBKDF2, GRUB-safe) + Btrfs + snapper snapshots
 - GRUB with `grub-btrfs` snapshot boot menu
-- `SDDM` (Wayland greeter under weston) with a DankMaterialShell-styled
-  Sugar Candy theme
+- `greetd` + the full DankMaterialShell greeter (login UI hosted under a
+  minimal `niri` session; your desktop session is Hyprland)
 - macOS muscle memory via `xremap` (Cmd→Ctrl) + XKB `us,gr`
 
 See the full verified design in
