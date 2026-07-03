@@ -33,7 +33,12 @@ step_apps() {
 	# prior (failed) run already pulled the conflicting `nodejs` package, swap it
 	# out first with -Rdd (skip dep checks; dependents are re-satisfied by the
 	# provides) so the install stays non-interactive and idempotent.
-	if pacman -Qq nodejs >/dev/null 2>&1; then
+	# NOTE: `pacman -Q nodejs` also resolves PROVIDERS — once nodejs-lts-jod
+	# is installed it answers "nodejs-lts-jod" with exit 0, but `pacman -R`
+	# needs an exact package name and dies with "target not found: nodejs"
+	# (seen on a real re-run after a mirror failure). Compare the resolved
+	# name so only the literal `nodejs` package ever triggers removal.
+	if [[ "$(pacman -Qq nodejs 2>/dev/null)" == "nodejs" ]]; then
 		info "removing conflicting 'nodejs' (Node 26) in favor of nodejs-lts-jod"
 		pacman -Rdd --noconfirm nodejs
 	fi
