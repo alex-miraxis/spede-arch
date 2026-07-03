@@ -45,4 +45,11 @@ fi
 
 cd "${DEST}"
 echo "==> launching Phase A installer (install.sh)"
+# Under `curl ... | bash`, stdin is the script pipe (already at EOF), NOT the
+# keyboard — so install.sh's interactive prompts (Wi-Fi, target disk, typed
+# wipe confirmation) would read EOF and abort ("no input (EOF) while reading
+# target disk"). Re-attach stdin to the controlling terminal.
+if [[ ! -t 0 && -r /dev/tty ]]; then
+	exec ./install.sh </dev/tty
+fi
 exec ./install.sh
