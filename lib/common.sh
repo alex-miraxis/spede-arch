@@ -150,16 +150,41 @@ as_user() {
 }
 
 # pkg_install PKGS... — install official packages, idempotent.
+#
+# Retries transient failures: a single flaky mirror timing out on one package
+# (seen on real metal: repo.greeklug.gr timing out on system-config-printer)
+# must not abort the whole install under set -e. Three quick attempts with
+# backoff, then a final attempt with pacman's relaxed download timeouts —
+# only that last one is allowed to kill the run.
 pkg_install() {
 	[[ $# -gt 0 ]] || return 0
-	pacman -S --needed --noconfirm "$@"
+	local attempt
+	for attempt in 1 2 3; do
+		if pacman -S --needed --noconfirm "$@"; then
+			return 0
+		fi
+		warn "pacman failed (attempt ${attempt}/4) — retrying in $((attempt * 5))s (flaky mirror?)"
+		sleep $((attempt * 5))
+	done
+	warn "pacman final attempt with relaxed download timeouts"
+	pacman -S --needed --noconfirm --disable-download-timeout "$@"
 }
 
 # aur_install PKGS... — build/install AUR packages as NEW_USER via yay.
 # yay (and makepkg) refuse to run as root, hence as_user.
+# Same transient-failure retry policy as pkg_install (downloads can hit the
+# same flaky mirrors, plus AUR/GitHub fetch blips).
 aur_install() {
 	[[ $# -gt 0 ]] || return 0
 	[[ -n "${NEW_USER:-}" ]] || die "aur_install: NEW_USER is unset"
+	local attempt
+	for attempt in 1 2 3; do
+		if as_user "$NEW_USER" yay -S --needed --noconfirm "$@"; then
+			return 0
+		fi
+		warn "yay failed (attempt ${attempt}/4) — retrying in $((attempt * 5))s (flaky mirror/AUR?)"
+		sleep $((attempt * 5))
+	done
 	as_user "$NEW_USER" yay -S --needed --noconfirm "$@"
 }
 
