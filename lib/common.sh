@@ -149,6 +149,28 @@ as_user() {
 	fi
 }
 
+# ensure_pacman_mirrors — guarantee /etc/pacman.d/mirrorlist has at least one
+# active Server line. Seen on real metal: a hand-pruned/reflector-mangled
+# mirrorlist with zero servers makes every pacman call fail with
+# "no servers configured for repository" — a state retries cannot fix.
+# Self-heal with Arch's official geo-balanced mirrors (always available).
+ensure_pacman_mirrors() {
+	local ml=/etc/pacman.d/mirrorlist
+	if ! grep -qE '^[[:space:]]*Server[[:space:]]*=' "$ml" 2>/dev/null; then
+		warn "mirrorlist has no active servers — writing official Arch geo mirrors"
+		backup_file "$ml"
+		mkdir -p /etc/pacman.d
+		cat >"$ml" <<-'EOF'
+			# Written by spede-arch (ensure_pacman_mirrors): the previous
+			# mirrorlist contained no active Server lines. Official
+			# geo-balanced mirrors, always reachable.
+			Server = https://geo.mirror.pkgbuild.com/$repo/os/$arch
+			Server = https://europe.mirror.pkgbuild.com/$repo/os/$arch
+			Server = https://america.mirror.pkgbuild.com/$repo/os/$arch
+		EOF
+	fi
+}
+
 # pkg_install PKGS... — install official packages, idempotent.
 #
 # Retries transient failures: a single flaky mirror timing out on one package
@@ -158,6 +180,7 @@ as_user() {
 # only that last one is allowed to kill the run.
 pkg_install() {
 	[[ $# -gt 0 ]] || return 0
+	ensure_pacman_mirrors
 	local attempt
 	for attempt in 1 2 3; do
 		if pacman -S --needed --noconfirm "$@"; then

@@ -113,6 +113,10 @@ grub-install may fail to write a boot entry."
 	else
 		warn "reflector not found; skipping mirror refresh."
 	fi
+	# Guard against a reflector run (or prior hand-edit) leaving the
+	# mirrorlist with zero active servers — pacstrap would fail with
+	# "no servers configured for repository".
+	ensure_pacman_mirrors
 
 	# --- 6. Interactive configuration ---------------------------------------
 	log ""
