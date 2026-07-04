@@ -200,9 +200,16 @@ step_greeter() {
 		"$user_home/.cache/quickshell"
 		"$user_home/.config/quickshell"
 	)
+	# Create as the USER, never root: `install -d -o user` only chowns the
+	# LEAF — missing parents (e.g. ~/.local/state on a fresh install) get
+	# created root-owned, which later blocks the user's own tools (seen on
+	# real metal: Claude Code installer EACCES on mkdir ~/.local/state/claude).
+	as_user "$NEW_USER" mkdir -p \
+		"$user_home/.config" "$user_home/.cache" \
+		"$user_home/.local/state" "$user_home/.local/share"
 	for d in "${_dms_dirs[@]}"; do
 		if [[ ! -d "$d" ]]; then
-			install -d -o "$NEW_USER" -g "$NEW_USER" "$d"
+			as_user "$NEW_USER" mkdir -p "$d"
 		fi
 	done
 	_seed_json "$user_home/.config/DankMaterialShell/settings.json"
@@ -245,7 +252,7 @@ step_greeter() {
 	)
 	local p
 	for p in "${_acl_paths[@]}"; do
-		[[ -d "$p" ]] || install -d -o "$NEW_USER" -g "$NEW_USER" "$p"
+		[[ -d "$p" ]] || as_user "$NEW_USER" mkdir -p "$p"
 		setfacl -x u:greeter "$p" 2>/dev/null || true
 		setfacl -m g:greeter:rX "$p" \
 			|| warn "setfacl g:greeter:rX failed on $p"
